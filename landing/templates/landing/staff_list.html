@@ -1,0 +1,259 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Management - NIKAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'landing/style.css' %}">
+</head>
+
+<body class="dashboard-body">
+
+    <!-- Sidebar -->
+    <aside class="sidebar-v2">
+        <div class="logo-v2">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00ecff" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <path d="M2 17L12 22L22 17" stroke="#00ecff" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <path d="M2 12L12 17L22 12" stroke="#00ecff" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </div>
+        <nav class="nav-v2">
+            <a href="{% url 'dashboard' %}" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+            </a>
+            <a href="{% url 'restroom_list' %}" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </a>
+            <a href="{% url 'staff_list' %}" class="nav-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </a>
+            <a href="{% url 'settings' %}" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                    </path>
+                </svg>
+            </a>
+        </nav>
+        <div class="user-v2">
+            <div class="user-avatar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-wrapper">
+        <header class="dash-header">
+            <div>
+                <h1>Staff Management</h1>
+                <div class="location-badge">Manage personnel access, roles, and shift status</div>
+            </div>
+            <a href="{% if restroom %}{% url 'add_staff_linked' restroom.restroom_id %}{% else %}{% url 'add_staff' %}{% endif %}"
+                class="btn-primary"
+                style="padding: 0.75rem 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; font-size: 0.9rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Add New Staff
+            </a>
+        </header>
+
+        <!-- Filters Section -->
+        <section style="margin-bottom: 2rem;">
+            <div class="d-card" style="padding: 1rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                <div class="search-box" style="flex: 1; min-width: 250px; position: relative;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-second)"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" placeholder="Search by name, ID, or email..." class="dark-input"
+                        style="width: 100%; padding-left: 3rem; background: rgba(31, 41, 55, 0.5); border-color: rgba(75, 85, 99, 0.4);">
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <select class="dark-input" style="width: auto;">
+                        <option>Role: All</option>
+                    </select>
+                    <select class="dark-input" style="width: auto;">
+                        <option>Department: Any</option>
+                    </select>
+                    <select class="dark-input" style="width: auto;">
+                        <option>Status: All</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Staff List Table -->
+        <section>
+            <div class="d-card" style="padding: 0;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead style="background: rgba(31, 41, 55, 0.5); border-bottom: 1px solid var(--card-border);">
+                        <tr>
+                            <th
+                                style="padding: 1rem 1.5rem; color: var(--text-second); font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
+                                Name / Email</th>
+                            <th
+                                style="padding: 1rem 1.5rem; color: var(--text-second); font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
+                                Role</th>
+                            <th
+                                style="padding: 1rem 1.5rem; color: var(--text-second); font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
+                                Department</th>
+                            <th
+                                style="padding: 1rem 1.5rem; color: var(--text-second); font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
+                                Phone</th>
+                            <th
+                                style="padding: 1rem 1.5rem; color: var(--text-second); font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for staff in staff_members %}
+                        <tr style="border-bottom: 1px solid var(--card-border);">
+                            <td style="padding: 1rem 1.5rem;">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div
+                                        style="width: 40px; height: 40px; border-radius: 50%; background: #374151; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+                                        {{ staff.name|slice:":1" }}
+                                    </div>
+                                    <div>
+                                        <div style="color: white; font-weight: 500;">{{ staff.name }}</div>
+                                        <div style="color: var(--text-second); font-size: 0.875rem;">{{ staff.email }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="padding: 1rem 1.5rem; color: white;">{{ staff.role }}</td>
+                            <td style="padding: 1rem 1.5rem; color: var(--text-second);">{{ staff.restroom.name }}</td>
+                            <td style="padding: 1rem 1.5rem; color: var(--text-second);">{{ staff.phone }}</td>
+                            <td style="padding: 1rem 1.5rem; position: relative;">
+                                <details style="position: relative;">
+                                    <summary
+                                        style="list-style: none; cursor: pointer; color: var(--text-second); display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; transition: background 0.2s;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="1"></circle>
+                                            <circle cx="12" cy="5" r="1"></circle>
+                                            <circle cx="12" cy="19" r="1"></circle>
+                                        </svg>
+                                    </summary>
+                                    <div
+                                        style="position: absolute; right: 0; top: 100%; background: #1f2937; border: 1px solid var(--card-border); border-radius: 0.5rem; padding: 0.5rem; z-index: 50; min-width: 160px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);">
+                                        <a href="{% url 'staff_logs' staff.id %}"
+                                            style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; color: var(--text-second); text-decoration: none; font-size: 0.875rem; border-radius: 0.25rem; transition: all 0.2s;"
+                                            onmouseover="this.style.background='rgba(55, 65, 81, 0.5)'; this.style.color='white'"
+                                            onmouseout="this.style.background='none'; this.style.color='var(--text-second)'">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z">
+                                                </path>
+                                                <polyline points="14 2 14 8 20 8"></polyline>
+                                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                                <polyline points="10 9 9 9 8 9"></polyline>
+                                            </svg>
+                                            Cleaning Log
+                                        </a>
+                                        <a href="{% url 'edit_staff' staff.id %}"
+                                            style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; color: var(--text-second); text-decoration: none; font-size: 0.875rem; border-radius: 0.25rem; transition: all 0.2s;"
+                                            onmouseover="this.style.background='rgba(55, 65, 81, 0.5)'; this.style.color='white'"
+                                            onmouseout="this.style.background='none'; this.style.color='var(--text-second)'">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7">
+                                                </path>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z">
+                                                </path>
+                                            </svg>
+                                            Update
+                                        </a>
+                                        <form action="{% url 'delete_staff' staff.id %}" method="POST"
+                                            onsubmit="return confirm('Are you sure you want to remove {{ staff.name }}?');"
+                                            style="margin: 0; padding: 0;">
+                                            {% csrf_token %}
+                                            <button type="submit"
+                                                style="display: flex; align-items: center; gap: 0.5rem; width: 100%; text-align: left; background: none; border: none; padding: 0.75rem 1rem; color: #ef4444; font-size: 0.875rem; cursor: pointer; border-radius: 0.25rem; transition: background 0.2s;"
+                                                onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'"
+                                                onmouseout="this.style.background='none'">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                                    <path
+                                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                    </path>
+                                                </svg>
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </details>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" style="padding: 3rem; text-align: center; color: var(--text-second);">
+                                No staff members found for this facility.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="color: var(--text-second); font-size: 0.875rem; margin-top: 1rem;">
+                Showing {{ staff_members|length }} staff members
+            </div>
+        </section>
+
+    </main>
+    <script>
+        // Close dropdown (details tag) when clicking outside
+        window.addEventListener('click', function (e) {
+            if (!e.target.closest('details')) {
+                var details = document.querySelectorAll('details');
+                details.forEach(function (detail) {
+                    detail.removeAttribute('open');
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

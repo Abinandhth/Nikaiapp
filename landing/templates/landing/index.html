@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIKAI - Breathing Cleaner, Living Safer</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'landing/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <span class="logo-icon">✶</span> NIKAI
+        </div>
+        <nav>
+            <a href="#about">About</a>
+            <a href="#features">Features</a>
+            <a href="#contact">Contact</a>
+        </nav>
+        <div class="auth-buttons">
+            <a href="{% url 'login' %}" class="login-btn">Login</a>
+            <a href="{% url 'admin_register' %}" class="register-btn">Register ></a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="badge">● SYSTEM ONLINE</div>
+                <h1>Breathing Cleaner,<br>Living <span class="text-muted">Safer.</span></h1>
+                <p>Poor restroom conditions impact public health. NIKAI uses advanced IoT sensors to monitor ammonia
+                    levels and air quality, ensuring a safe and hygienic environment for everyone.</p>
+                <a href="{% url 'login' %}" class="cta-button">Login to Dashboard</a>
+            </div>
+            <div class="hero-image">
+                <div class="dashboard-preview">
+                    <!-- Placeholder for dashboard preview -->
+                    <div class="chart-placeholder">📊</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <h2>Advanced Hygiene Technology</h2>
+            <p class="section-subtitle">Designed to be invisible yet impactful. Our sensors work around the clock so you
+                don't have to.</p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">↔️</div>
+                    <h3>Ammonia Detection</h3>
+                    <p>High-precision sensors continuously monitor ammonia concentrations, detecting potential hygiene
+                        issues before they become noticeable odors.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔔</div>
+                    <h3>Real-time Alerts</h3>
+                    <p>Get instant notifications via SMS or email when air quality drops below set thresholds, allowing
+                        for immediate custodial response.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">☁️</div>
+                    <h3>Easy Installation</h3>
+                    <p>Zero structural changes required. Our plug-and-play modules adhere to any surface and calibrate
+                        automatically within minutes.</p>
+                </div>
+            </div>
+        </section>
+
+
+
+        <section id="contact" class="contact">
+            <h2>Get in Touch</h2>
+            <p class="section-subtitle">Have questions about NIKAI? We're here to help.</p>
+
+            <form class="contact-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="john@company.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" rows="4" placeholder="How can we help you?"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Message ➤</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2023 NIKAI IoT Solutions. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

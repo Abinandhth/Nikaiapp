@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - NIKAI</title>
+    <link rel="stylesheet" href="{% static 'landing/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="login-body">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo-icon-large">✶</div>
+                <h1>NIKAI</h1>
+                <p>FACILITY ADMIN PORTAL</p>
+            </div>
+
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                <div class="alert alert-error">
+                    Invalid credentials. Please try again.
+                </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="username">Admin ID</label>
+                    <div class="input-with-icon">
+                        <span class="icon">👤</span>
+                        <input type="text" id="username" name="username" placeholder="ID or Email" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-with-icon">
+                        <span class="icon">🔒</span>
+                        <input type="password" id="password" name="password" placeholder="............" required>
+                        <span class="icon-right">👁️</span>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="remember">
+                        <span class="checkmark"></span>
+                        Remember me
+                    </label>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn-primary full-width">Access Dashboard →</button>
+            </form>
+
+            <div class="login-footer">
+                <span class="status-dot"></span> SYSTEM OPERATIONAL • SECURE CONNECTION
+            </div>
+        </div>
+
+        <div class="copyright">
+            &copy; 2024 NIKAI Systems Inc. v2.4.0-rc
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,206 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if mode == 'update' %}Edit Staff{% else %}Add Staff{% endif %} - NIKAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'landing/style.css' %}">
+    <style>
+        .role-radio { display: none; }
+        .role-card {
+            background-color: rgba(31, 41, 55, 0.4);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .role-radio:checked+.role-card {
+            border-color: var(--primary);
+            background-color: rgba(0, 236, 255, 0.1);
+        }
+        .role-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 0.5rem;
+            color: var(--text-second);
+        }
+        .role-radio:checked+.role-card .role-icon {
+            color: var(--primary);
+        }
+    </style>
+</head>
+
+<body class="activation-body" style="justify-content: center; min-height: 100vh;">
+
+    <div class="activation-container" style="max-width: 650px;">
+        <div class="activation-card">
+            <div class="activation-header" style="justify-content: space-between; align-items: start;">
+                <div>
+                    <h2>
+                        {% if mode == 'update' %}Update Staff Member{% else %}Onboard New Staff Member{% endif %}
+                    </h2>
+                    <p>
+                        {% if mode == 'update' %}Edit details and assignment{% else %}Fill in the details to register a new employee{% endif %}
+                    </p>
+                </div>
+                <a href="#" onclick="window.history.back()" style="color: var(--text-second); cursor: pointer;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </a>
+            </div>
+
+            <form method="post" action="" class="activation-form">
+                {% csrf_token %}
+                
+                {% if error %}
+                <div style="background-color: rgba(239, 68, 68, 0.2); color: #ef4444; padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem;">
+                    {{ error }}
+                </div>
+                {% endif %}
+
+                <div class="form-section">
+                    <h4 class="section-title" style="margin-bottom: 1rem; font-size: 0.75rem; color: var(--text-second); letter-spacing: 0.05em;">
+                        PERSONAL INFORMATION</h4>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label>Full Name</label>
+                        <div style="position: relative;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-second)"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <input type="text" name="name" placeholder="e.g. Sarah Jenkins" class="dark-input"
+                                style="padding-left: 3rem;" value="{{ staff.name|default:'' }}" required>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label>Email Address</label>
+                            <div style="position: relative;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-second)"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                                <input type="email" name="email" placeholder="sarah@nikai.com" class="dark-input"
+                                    style="padding-left: 3rem;" value="{{ staff.email|default:'' }}" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label>Phone Number</label>
+                            <div style="position: relative;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-second)"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                </svg>
+                                <input type="tel" name="phone" placeholder="+1 (555) 000-0000" class="dark-input"
+                                    style="padding-left: 3rem;" value="{{ staff.phone|default:'' }}" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4 class="section-title" style="margin-bottom: 1rem; font-size: 0.75rem; color: var(--text-second); letter-spacing: 0.05em;">
+                        ROLE & ASSIGNMENT</h4>
+
+                    <label>Staff Role</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                        <label>
+                            <input type="radio" name="role" value="Janitor" class="role-radio" required 
+                                {% if not staff or staff.role == 'Janitor' %}checked{% endif %}>
+                            <div class="role-card">
+                                <svg class="role-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 2v20"></path><path d="M20 2v20"></path><path d="M4 2v20"></path><path d="M4 12h16"></path>
+                                </svg>
+                                <span>Janitor</span>
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="role" value="Supervisor" class="role-radio"
+                                {% if staff.role == 'Supervisor' %}checked{% endif %}>
+                            <div class="role-card">
+                                <svg class="role-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                </svg>
+                                <span>Supervisor</span>
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="role" value="Technician" class="role-radio"
+                                {% if staff.role == 'Technician' %}checked{% endif %}>
+                            <div class="role-card">
+                                <svg class="role-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                                </svg>
+                                <span>Technician</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label>Primary Assignment Location</label>
+                        <div style="position: relative;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-second)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <select name="restroom" class="dark-input select-input" style="padding-left: 3rem;" required>
+                                {% for r in restrooms %}
+                                    <option value="{{ r.restroom_id }}" 
+                                        {% if selected_restroom_id == r.restroom_id %}selected{% endif %}>
+                                        {{ r.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4 class="section-title" style="margin-bottom: 1rem; font-size: 0.75rem; color: var(--text-second); letter-spacing: 0.05em;">
+                        SHIFT SCHEDULE</h4>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label>Shift Start</label>
+                            <input type="time" name="shift_start" class="dark-input" 
+                                value="{{ staff.shift_start|default:'08:00' }}" required>
+                        </div>
+                        <div>
+                            <label>Shift End</label>
+                            <input type="time" name="shift_end" class="dark-input" 
+                                value="{{ staff.shift_end|default:'16:00' }}" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions" style="margin-top: 2rem;">
+                    <button type="button" class="cancel-btn" onclick="window.history.back()">Cancel</button>
+                    <button type="submit" class="save-btn" style="background-color: var(--primary); color: #000; font-weight: 600;">
+                        {% if mode == 'update' %}Update Profile{% else %}Save Staff Profile{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

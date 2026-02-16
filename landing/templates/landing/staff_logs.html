@@ -1,0 +1,365 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ staff.name }} - Staff Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'landing/style.css' %}">
+</head>
+
+<body class="dashboard-body">
+
+    <!-- Sidebar -->
+    <aside class="sidebar-v2">
+        <div class="logo-v2">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00ecff" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <path d="M2 17L12 22L22 17" stroke="#00ecff" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <path d="M2 12L12 17L22 12" stroke="#00ecff" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </div>
+        <nav class="nav-v2">
+            <a href="{% url 'dashboard' %}" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+            </a>
+            <a href="{% url 'restroom_list' %}" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </a>
+            <a href="{% url 'staff_list' %}" class="nav-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </a>
+            <a href="{% url 'settings' %}" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                    </path>
+                </svg>
+            </a>
+        </nav>
+        <div class="user-v2">
+            <div class="user-avatar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-wrapper">
+        <header class="dash-header"
+            style="flex-direction: column; align-items: flex-start; gap: 0.5rem; margin-bottom: 2rem;">
+            <!-- Breadcrumb -->
+            <div
+                style="font-size: 0.85rem; color: var(--text-second); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <a href="{% url 'staff_list' %}" style="color: var(--text-second); text-decoration: none;">Staff
+                    Management</a>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+                <span style="color: white;">{{ staff.name }}</span>
+            </div>
+        </header>
+
+        <!-- Top Overview Section -->
+        <section class="top-grid" style="grid-template-columns: 1fr 2fr;">
+
+            <!-- Staff Profile Card -->
+            <div class="d-card"
+                style="align-items: center; text-align: center; justify-content: center; padding: 2.5rem 1.5rem;">
+                <!-- Profile Image / Placeholder -->
+                <div
+                    style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #1f2937 0%, #111827 100%); display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; position: relative; border: 2px solid var(--primary);">
+                    <span style="font-size: 2.5rem; color: var(--primary); font-weight: 700;"></span>
+                    <!-- Status Dot -->
+                    <div
+                        style="position: absolute; bottom: 5px; right: 5px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #0c1116; 
+                        {% if staff.status == 'On Duty' %}background: #10b981;{% else %}background: #6b7280;{% endif %}">
+                    </div>
+                </div>
+
+                <h2 style="font-size: 1.5rem; margin: 0 0 0.5rem 0; font-weight: 600;">{{ staff.name }}</h2>
+                <div
+                    style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-second); margin-bottom: 1.5rem;">
+                    <span
+                        style="background: rgba(31, 41, 55, 0.5); padding: 0.25rem 0.75rem; border-radius: 999px; border: 1px solid var(--card-border);">
+                        {{ staff.role }}</span>
+                    <span>• ID #{{ staff.id }}</span>
+                </div>
+
+                <div
+                    style="width: 100%; border-top: 1px solid var(--card-border); padding-top: 1.5rem; margin-top: 0.5rem;">
+                    <div style="font-size: 0.85rem; color: var(--text-second);">Joined: <span style="color: white;">
+                            {{ staff.created_at|date:"M d, Y" }}</span></div>
+                </div>
+            </div>
+
+            <!-- Staff Details Card -->
+            <div class="d-card" style="padding: 2rem;">
+                <div class="card-header">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                        </svg>
+                        <h3 style="margin: 0; font-size: 1.1rem;">Staff Details</h3>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <!-- Email -->
+                    <div style="display: flex; gap: 1rem;">
+                        <div
+                            style="width: 40px; height: 40px; background: rgba(31, 41, 55, 0.5); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
+                                </path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <div
+                                style="font-size: 0.75rem; color: var(--text-second); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+                                Email Address</div>
+                            <div style="font-size: 0.95rem;">{{ staff.email }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Phone -->
+                    <div style="display: flex; gap: 1rem;">
+                        <div
+                            style="width: 40px; height: 40px; background: rgba(31, 41, 55, 0.5); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div
+                                style="font-size: 0.75rem; color: var(--text-second); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+                                Phone Number</div>
+                            <div style="font-size: 0.95rem;">{{ staff.phone }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Shift Schedule -->
+                    <div style="display: flex; gap: 1rem;">
+                        <div
+                            style="width: 40px; height: 40px; background: rgba(31, 41, 55, 0.5); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <div
+                                style="font-size: 0.75rem; color: var(--text-second); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+                                Shift Schedule</div>
+                            <div style="font-size: 0.95rem;">
+                                {{ staff.shift_start|time:"h:i A" }} - {{ staff.shift_end|time:"h:i A" }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Current Status -->
+                    <!-- <div style="display: flex; gap: 1rem;">
+                        <div
+                            style="width: 40px; height: 40px; background: rgba(31, 41, 55, 0.5); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div
+                                style="font-size: 0.75rem; color: var(--text-second); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+                                Current Status</div>
+                            <div style="font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <div
+                                    style="width: 8px; height: 8px; border-radius: 50%;  {% if staff.status == 'On Duty' %}background: #10b981;{% else %}background: #6b7280;{% endif %}">
+                                </div>
+                                {{ staff.status }}
+                            </div>
+                        </div>
+                    </div> -->
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Logs Section -->
+        <section>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1rem;">
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 600; margin: 0 0 0.25rem 0;">Recent Cleaning Logs</h2>
+                    <div style="color: var(--text-second); font-size: 0.9rem;">Detailed history of assigned tasks and
+                        completion status.</div>
+                </div>
+
+                <!-- Filter -->
+                <!-- Filter -->
+                <form method="get" id="dateForm" class="d-card"
+                    style="padding: 0.5rem 1rem; border-radius: 8px; display: flex; align-items: center; gap: 0.5rem; height: auto;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <input type="date" name="date" value="{{ selected_date }}"
+                        style="background: transparent; border: none; color: white; padding: 0; width: 100%; cursor: pointer; outline: none; font-family: inherit;"
+                        onchange="document.getElementById('dateForm').submit()">
+                </form>
+            </div>
+
+            <!-- Table -->
+            <div class="d-card" style="padding: 0;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead style="background: rgba(31, 41, 55, 0.5); border-bottom: 1px solid var(--card-border);">
+                        <tr>
+                            <th
+                                style="padding: 1rem 1.5rem; color: var(--text-second); font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
+                                Date / Time</th>
+                            <th
+                                style="padding: 1rem 1.5rem; color: var(--text-second); font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
+                                Location</th>
+                            <th
+                                style="padding: 1rem 1.5rem; color: var(--text-second); font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
+                                Type</th>
+                            <th
+                                style="padding: 1rem 1.5rem; color: var(--text-second); font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
+                                Duration</th>
+                            <th
+                                style="padding: 1rem 1.5rem; color: var(--text-second); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; text-align: right;">
+                                Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr style="border-bottom: 1px solid var(--card-border);">
+                            <td style="padding: 1rem 1.5rem;">
+                                <div style="color: white; font-weight: 500;">{{ log.start_time|date:"M d, Y" }}</div>
+                                <div style="color: var(--text-second); font-size: 0.85rem;">{{ log.start_time|time:"h:i A" }}</div>
+                            </td>
+                            <td style="padding: 1rem 1.5rem;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div
+                                        style="width: 32px; height: 32px; border-radius: 6px; background: rgba(31, 41, 55, 0.5); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                        <!-- Placeholder facility icon -->
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                            stroke="var(--text-second)" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                        </svg>
+                                    </div>
+                                    <span style="color: white;">{{ log.restroom.name }}</span>
+                                </div>
+                            </td>
+                            <td style="padding: 1rem 1.5rem;">
+                                <span
+                                    style="background: rgba(31, 41, 55, 0.5); padding: 0.25rem 0.75rem; border-radius: 6px; font-size: 0.85rem; border: 1px solid var(--card-border); color: #d1d5db;">
+                                    {{ log.activity_type }}
+                                </span>
+                            </td>
+                            <td style="padding: 1rem 1.5rem; color: var(--text-second);">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    {% if log.duration_minutes %}
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                    {{ log.duration_minutes }} mins
+                                    {% else %}
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M5 12h14"></path>
+                                    </svg>
+                                    --
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td style="padding: 1rem 1.5rem; text-align: right;">
+                                <span class="status-badge"
+                                    style="padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.35rem;
+                                    {% if log.status == 'Complete' %}background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2);
+                                    {% elif log.status == 'In Progress' %}background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2);
+                                    {% else %}background: rgba(107, 114, 128, 0.1); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.2);{% endif %}">
+                                    <div style="width: 6px; height: 6px; border-radius: 50%; background: currentColor;">
+                                    </div>
+                                    {{ log.status }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" style="padding: 3rem; text-align: center; color: var(--text-second);">
+                                No cleaning activity logs found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Pagination (Bottom of table) -->
+                <div
+                    style="padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--card-border); color: var(--text-second); font-size: 0.85rem;">
+                    <div>Showing {{ logs|length }} logs</div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button
+                            style="background: none; border: none; color: var(--text-second); cursor: pointer; padding: 0.25rem;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                        </button>
+                        <button
+                            style="background: none; border: none; color: white; cursor: pointer; padding: 0.25rem;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</body>
+
+</html>

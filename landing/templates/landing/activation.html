@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activate Facility - NIKAI</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'landing/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+</head>
+
+<body class="activation-body">
+
+    <div class="activation-container">
+        <div class="activation-card">
+            <div class="activation-header">
+                <div>
+                    <h2>
+                        {% if mode == 'update' %}
+                            Update Facility Configuration
+                        {% else %}
+                            Register Facility & Configure Sensors
+                        {% endif %}
+                    </h2>
+                    <p>
+                        {% if mode == 'update' %}
+                            Modify monitoring point details
+                        {% else %}
+                            Add a new monitoring point to the NIKAI dashboard
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <form method="post" action="" class="activation-form">
+                {% csrf_token %}
+
+                <div class="form-section">
+                    <label>Restroom Name / Identifier</label>
+                    <input type="text" name="restroom_name" placeholder="e.g., North Wing Gents" class="dark-input"
+                        value="{{ restroom.name|default:'' }}" required>
+                </div>
+
+                <div class="sensor-config-section">
+                    <h4 class="section-title">((•)) SENSOR CONFIGURATION</h4>
+                    <div class="sensor-grid">
+                        <div class="sensor-input-group">
+                            <label>Ammonia (NH3) <span class="icon">💨</span></label>
+                            <input type="text" name="sensor_ammonia" placeholder="SN-NH3-0000"
+                                value="{{ ammonia_sensor.sensor_id|default:'' }}" class="dark-input with-icon">
+                        </div>
+                        <div class="sensor-input-group">
+                            <label>Smoke Detector <span class="icon">🔥</span></label>
+                            <input type="text" name="sensor_smoke" placeholder="SN-SMK-0000"
+                                value="{{ smoke_sensor.sensor_id|default:'' }}" class="dark-input with-icon">
+                        </div>
+                        <div class="sensor-input-group">
+                            <label>Footfall Counter <span class="icon">👥</span></label>
+                            <input type="text" name="sensor_footfall" placeholder="SN-PPL-0000"
+                                value="{{ footfall_sensor.sensor_id|default:'' }}" class="dark-input with-icon">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="location-section">
+                    <h4 class="section-title">📍 LOCATION</h4>
+                    <div class="location-grid">
+                        <div class="location-inputs">
+                            <label>Search Address</label>
+                            <input type="text" id="address-search" placeholder="Search location..."
+                                class="dark-input search-input">
+
+                            <div class="lat-long-group">
+                                <div>
+                                    <label>Latitude</label>
+                                    <input type="text" name="latitude" id="latitude" placeholder="35.6895"
+                                        value="{{ restroom.latitude|default:'' }}" class="dark-input" readonly
+                                        required>
+                                </div>
+                                <div>
+                                    <label>Longitude</label>
+                                    <input type="text" name="longitude" id="longitude" placeholder="139.6917"
+                                        value="{{ restroom.longitude|default:'' }}" class="dark-input" readonly
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="map-container" id="map"></div>
+                    </div>
+                </div>
+
+                <div class="details-grid">
+                    <div>
+                        <label>Max Capacity</label>
+                        <input type="number" name="capacity" placeholder="10" class="dark-input"
+                            value="{{ restroom.capacity|default:'' }}" required>
+                    </div>
+                    <div>
+                        <label>Status</label>
+                        <select name="status" class="dark-input select-input">
+                            <option value="Operational" {% if restroom.status == 'Operational' %}selected{% endif %}>
+                                Active (Operational)</option>
+                            <option value="Maintenance" {% if restroom.status == 'Maintenance' %}selected{% endif %}>
+                                Maintenance</option>
+                            <option value="Cleaning" {% if restroom.status == 'Cleaning' %}selected{% endif %}>Cleaning
+                            </option>
+                            <option value="Inactive" {% if restroom.status == 'Inactive' %}selected{% endif %}>Inactive
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="save-btn">
+                        {% if mode == 'update' %}Update Configuration{% else %}Save & Activate All Sensors{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if we have existing coordinates from the input fields
+            var existingLat = document.getElementById('latitude').value;
+            var existingLng = document.getElementById('longitude').value;
+            var marker;
+
+            // Default fallback if no data exists (Tokyo)
+            var startLat = existingLat ? parseFloat(existingLat) : 35.6895;
+            var startLng = existingLng ? parseFloat(existingLng) : 139.6917;
+            var startZoom = existingLat ? 16 : 13; // Zoom in closer if we have a specific location
+
+            // Initialize Map
+            var map = L.map('map').setView([startLat, startLng], startZoom);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }).addTo(map);
+
+            // If we have existing coordinates, place the marker immediately
+            if (existingLat && existingLng) {
+                marker = L.marker([startLat, startLng]).addTo(map);
+            }
+
+            // Map Click Event
+            map.on('click', function (e) {
+                var lat = e.latlng.lat.toFixed(6);
+                var lng = e.latlng.lng.toFixed(6);
+
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lng;
+
+                if (marker) {
+                    marker.setLatLng(e.latlng);
+                } else {
+                    marker = L.marker(e.latlng).addTo(map);
+                }
+            });
+
+            // Simple Address Search (Mock for UI purposes)
+            document.getElementById('address-search').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    alert('Search functionality requires a Geocoding API key. Please select location on map manually.');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

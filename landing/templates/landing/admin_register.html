@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Initialize System - NIKAI</title>
+    <link rel="stylesheet" href="{% static 'landing/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="split-screen">
+        <div class="left-panel">
+            <div class="logo">
+                <span class="logo-icon">✶</span> NIKAI
+            </div>
+
+            <div class="content-wrapper">
+                <h1>Initialize Your <br><span class="text-highlight">System.</span></h1>
+                <p>Connect your sensors and ensure facility safety. Create your root admin account to begin the
+                    initialization sequence.</p>
+
+                <div class="status-badge">
+                    <span class="status-dot"></span> STATUS: WAITING FOR ACTIVATION
+                </div>
+
+                <div class="footer-info">
+                    <p>V.4.0.2 // SECURE_CONNECTION</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="form-wrapper">
+                <h2>Create Admin Profile.</h2>
+                <p class="subtitle">Enter your credentials to claim the root access.</p>
+
+                <form method="POST" action="{% url 'admin_register' %}">
+                    {% csrf_token %}
+
+                    {% if error %}
+                    <div class="alert alert-error">
+                        {{ error }}
+                    </div>
+                    {% endif %}
+
+                    <div class="form-group">
+                        <label for="username">FULL NAME / USERNAME</label>
+                        <input type="text" id="username" name="username" placeholder="ex. Alex Chen" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">WORK EMAIL</label>
+                        <input type="email" id="email" name="email" placeholder="name@company.com" required>
+                    </div>
+
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="password">PASSWORD</label>
+                            <input type="password" id="password" name="password" placeholder="........" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm_password">CONFIRM PASSWORD</label>
+                            <input type="password" id="confirm_password" name="confirm_password" placeholder="........"
+                                required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary full-width">ACTIVATE SYSTEM & CREATE ACCOUNT →</button>
+                </form>
+
+                <p class="login-link">Already set up? <a href="{% url 'login' %}">Login here.</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

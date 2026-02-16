@@ -1,0 +1,336 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - NIKAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'landing/style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="dashboard-body">
+
+    <!-- Sidebar -->
+    <aside class="sidebar-v2">
+        <div class="logo-v2">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00ecff" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <path d="M2 17L12 22L22 17" stroke="#00ecff" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <path d="M2 12L12 17L22 12" stroke="#00ecff" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </div>
+        <nav class="nav-v2">
+            <a href="{% url 'dashboard' %}" class="nav-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+            </a>
+            <a href="{% url 'restroom_list' %}" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </a>
+            <a href="{% url 'staff_list' %}" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </a>
+            <a href="{% url 'settings' %}" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                    </path>
+                </svg>
+            </a>
+        </nav>
+        <div class="user-v2">
+            <div class="user-avatar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-wrapper">
+
+        <!-- Header -->
+        <header class="dash-header">
+            <div>
+                <h1>Dashboard Overview</h1>
+                <div class="location-badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    Facility: {{ restroom.name }}
+                </div>
+            </div>
+            <div class="system-status">
+                <div class="status-dot-pulse"></div>
+                SYSTEM ONLINE
+            </div>
+        </header>
+
+        <!-- Top Grid -->
+        <section class="top-grid">
+
+            <!-- Air Quality Card -->
+            <div class="d-card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-label">Air Quality</div>
+                        <span class="sub-label">Ammonia (NH3)</span>
+                    </div>
+                    <div class="live-badge">
+                        <span class="live-dot"></span> Live
+                    </div>
+                </div>
+                <div class="gauge-container">
+                    <div class="radial-progress">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="radial-bg" cx="50" cy="50" r="40"></circle>
+                            <circle class="radial-value" id="ammoniaGauge" cx="50" cy="50" r="40"></circle>
+                        </svg>
+                        <div class="gauge-text">
+                            <div class="gauge-val">{{ current_ammonia }}</div>
+                            <div class="gauge-unit">PPM</div>
+                        </div>
+                    </div>
+                    <div class="aq-status">
+                        <div class="card-label">Status</div>
+                        <h4>{{ ammonia_status }}</h4>
+                        <p>Threshold: &lt; 25 PPM</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Safety Status Card -->
+            <div class="d-card">
+                <div class="safety-content">
+                    <div class="shield-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </div>
+                    <div class="safety-status-text">Safe / Clear</div>
+                    <div class="safety-sub">Smoke Detector Status</div>
+                </div>
+                <div class="last-check">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    </svg>
+                    Last check: Just now
+                </div>
+            </div>
+
+            <!-- Footfall Card -->
+            <div class="d-card">
+                <div class="card-header">
+                    <div class="card-label">Footfall</div>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <div class="footfall-stat">
+                    <span class="big-number">{{ total_footfall_today }}</span>
+                    <span class="trend-badge trend-up">↗ +12%</span>
+                </div>
+                <div class="sub-label" style="text-transform: none; color: var(--text-second); margin-top:0.5rem">Total
+                    Visits Today</div>
+                <div class="footfall-chart-mini">
+                    <canvas id="miniSparkline"></canvas>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Facility Trends Chart -->
+        <section class="trends-section">
+            <div class="trends-header">
+                <div>
+                    <div class="card-label" style="font-size: 1rem; color: white;">Facility Trends</div>
+                    <div class="legend">
+                        <div class="legend-item"><span class="dot-ammonia"></span> Ammonia Levels</div>
+                        <div class="legend-item"><span class="dot-footfall"></span> Footfall</div>
+                    </div>
+                </div>
+                <div class="chart-controls">
+                    <div class="toggle-group">
+                        <div class="toggle-btn active">Day</div>
+                        <div class="toggle-btn">Month</div>
+                    </div>
+                    <form method="get" id="dateForm">
+                        <label class="date-picker-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <input type="date" name="date" value="{{ selected_date }}"
+                                style="background:transparent; border:none; color:inherit; font-family:inherit; outline:none;"
+                                onchange="document.getElementById('dateForm').submit()">
+                        </label>
+                    </form>
+                </div>
+            </div>
+
+            <div class="main-chart-container">
+                <canvas id="facilityTrendsChart"></canvas>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // 1. Air Quality Gauge Animation
+        const ammoniaVal = {{ current_ammonia }};
+        const maxVal = 50; // Assumed max for gauge
+        const circle = document.getElementById('ammoniaGauge');
+        const radius = circle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+
+        const offset = circumference - (Math.min(ammoniaVal, maxVal) / maxVal) * circumference;
+
+        // Delay slightly for animation effect
+        setTimeout(() => {
+            circle.style.strokeDashoffset = offset;
+        }, 100);
+
+        // Chart Configuration
+        Chart.defaults.color = '#525252';
+        Chart.defaults.borderColor = '#1f2937';
+        Chart.defaults.font.family = "'Inter', sans-serif";
+
+        // 2. Mini Sparkline for Footfall
+        new Chart(document.getElementById('miniSparkline'), {
+            type: 'line',
+            data: {
+                labels: {{ footfall_daily_labels| safe }}, // Reuse daily labels
+            datasets: [{
+                data: {{ footfall_daily_data| safe }},
+            borderColor: '#00ecff',
+            borderWidth: 2,
+            tension: 0.4,
+            pointRadius: 0,
+            fill: false
+                }]
+            },
+            options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            scales: { x: { display: false }, y: { display: false } }
+        }
+        });
+
+        // 3. Main Combined Chart
+        const ctx = document.getElementById('facilityTrendsChart').getContext('2d');
+        const gradientAmmonia = ctx.createLinearGradient(0, 0, 0, 400);
+        gradientAmmonia.addColorStop(0, 'rgba(0, 236, 255, 0.2)');
+        gradientAmmonia.addColorStop(1, 'rgba(0, 236, 255, 0)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ ammonia_labels| safe }}, // Assuming these align roughly or using one time axis
+            datasets: [
+            {
+                label: 'Ammonia Levels',
+                data: {{ ammonia_data| safe }},
+            borderColor: '#00ecff',
+            backgroundColor: gradientAmmonia,
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true,
+            yAxisID: 'y'
+                    },
+            {
+                label: 'Footfall',
+                data: {{ footfall_daily_data| safe }}, // We might need to match array lengths. 
+            // Note: If labels don't match, Chart.js might truncate. In a real app, we'd merge time series.
+            // For this UI demo, we'll try to visually fit.
+            borderColor: '#ffffff',
+            borderWidth: 2,
+            borderDash: [5, 5],
+            tension: 0.4,
+            pointRadius: 3,
+            pointBackgroundColor: '#000',
+            pointBorderColor: '#fff',
+            yAxisID: 'y1'
+                    }
+        ]
+            },
+            options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                legend: { display: false }, // Custom legend used
+                tooltip: {
+                    backgroundColor: '#1f2937',
+                    titleColor: '#fff',
+                    bodyColor: '#9ca3af',
+                    borderColor: '#374151',
+                    borderWidth: 1,
+                    padding: 10,
+                    displayColors: true
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false, color: '#1f2937' },
+                    ticks: { color: '#6b7280' }
+                },
+                y: {
+                    position: 'left',
+                    grid: { color: 'rgba(31, 41, 55, 0.5)' },
+                    ticks: { color: '#6b7280' },
+                    beginAtZero: true
+                },
+                y1: {
+                    position: 'right',
+                    grid: { display: false },
+                    ticks: { color: '#6b7280' },
+                    beginAtZero: true
+                }
+            }
+        }
+        });
+    </script>
+</body>
+
+</html>
