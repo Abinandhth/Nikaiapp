@@ -124,56 +124,87 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Check if we have existing coordinates from the input fields
-            var existingLat = document.getElementById('latitude').value;
-            var existingLng = document.getElementById('longitude').value;
-            var marker;
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 1. Setup Elements and Initial State
+        const latInput = document.getElementById('latitude');
+        const lngInput = document.getElementById('longitude');
+        const searchInput = document.getElementById('address-search');
+        let marker;
 
-            // Default fallback if no data exists (Tokyo)
-            var startLat = existingLat ? parseFloat(existingLat) : 35.6895;
-            var startLng = existingLng ? parseFloat(existingLng) : 139.6917;
-            var startZoom = existingLat ? 16 : 13; // Zoom in closer if we have a specific location
+        const existingLat = latInput.value;
+        const existingLng = lngInput.value;
 
-            // Initialize Map
-            var map = L.map('map').setView([startLat, startLng], startZoom);
+        const startLat = existingLat ? parseFloat(existingLat) : 9.6841;
+        const startLng = existingLng ? parseFloat(existingLng) : 76.3312;
+        const startZoom = existingLat ? 16 : 13;
 
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-                subdomains: 'abcd',
-                maxZoom: 20
-            }).addTo(map);
+        // 2. Initialize Map
+        const map = L.map('map').setView([startLat, startLng], startZoom);
 
-            // If we have existing coordinates, place the marker immediately
-            if (existingLat && existingLng) {
-                marker = L.marker([startLat, startLng]).addTo(map);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO'
+        }).addTo(map);
+
+        if (existingLat && existingLng) {
+            marker = L.marker([startLat, startLng]).addTo(map);
+        }
+
+        // 3. Helper Function to Update Marker & Form Fields
+        function updateLocation(lat, lng, moveMap = false) {
+            const formattedLat = parseFloat(lat).toFixed(6);
+            const formattedLng = parseFloat(lng).toFixed(6);
+
+            latInput.value = formattedLat;
+            lngInput.value = formattedLng;
+
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng]).addTo(map);
             }
 
-            // Map Click Event
-            map.on('click', function (e) {
-                var lat = e.latlng.lat.toFixed(6);
-                var lng = e.latlng.lng.toFixed(6);
+            if (moveMap) {
+                map.setView([lat, lng], 15);
+            }
+        }
 
-                document.getElementById('latitude').value = lat;
-                document.getElementById('longitude').value = lng;
+        // 4. Search Logic (The part you wanted to import)
+        function performSearch() {
+            const query = searchInput.value;
+            if (!query) return;
 
-                if (marker) {
-                    marker.setLatLng(e.latlng);
-                } else {
-                    marker = L.marker(e.latlng).addTo(map);
-                }
-            });
+            // Use Nominatim Free API
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const lat = data[0].lat;
+                        const lon = data[0].lon;
+                        updateLocation(lat, lon, true);
+                    } else {
+                        alert("Location not found. Please try a different search term or click on the map.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Search Error:', error);
+                    alert("Unable to reach search service.");
+                });
+        }
 
-            // Simple Address Search (Mock for UI purposes)
-            document.getElementById('address-search').addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    alert('Search functionality requires a Geocoding API key. Please select location on map manually.');
-                }
-            });
+        // 5. Event Listeners
+        map.on('click', function (e) {
+            updateLocation(e.latlng.lat, e.latlng.lng);
         });
-    </script>
+
+        searchInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Stop form from submitting
+                performSearch();
+            }
+        });
+    });
+</script>
 </body>
 
 </html>
