@@ -1,6 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+# Add this new model
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    last_location_update = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return f"{self.user.username}'s Profile"
+
 class Restroom(models.Model):
     STATUS_CHOICES = [
         ('Operational', 'Operational'),
@@ -30,8 +39,8 @@ class Sensor(models.Model):
     ]
 
     sensor_id = models.CharField(max_length=50, unique=True, help_text="Unique Identifier for the sensor")
-    restroom = models.ForeignKey(Restroom, on_delete=models.SET_NULL, null=True, blank=True, related_name='sensors')
-    sensor_type = models.CharField(max_length=50, help_text="Type of sensor (e.g. Ammonia, Smoke,Footfall)")
+    restroom = models.ForeignKey(Restroom, on_delete=models.CASCADE, null=True, blank=True, related_name='sensors')
+    sensor_type = models.CharField(max_length=50, help_text="Type of sensor (e.g. Ammonia,Footfall)")
     threshold_min = models.FloatField(null=True, blank=True, help_text="Minimum threshold value")
     threshold_max = models.FloatField(null=True, blank=True, help_text="Maximum threshold value")
     status = models.CharField(max_length=20, choices=SENSOR_STATUS, default='Active')

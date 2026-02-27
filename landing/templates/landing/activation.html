@@ -20,16 +20,16 @@
                 <div>
                     <h2>
                         {% if mode == 'update' %}
-                            Update Facility Configuration
+                        Update Facility Configuration
                         {% else %}
-                            Register Facility & Configure Sensors
+                        Register Facility & Configure Sensors
                         {% endif %}
                     </h2>
                     <p>
                         {% if mode == 'update' %}
-                            Modify monitoring point details
+                        Modify monitoring point details
                         {% else %}
-                            Add a new monitoring point to the NIKAI dashboard
+                        Add a new monitoring point to the NIKAI dashboard
                         {% endif %}
                     </p>
                 </div>
@@ -38,12 +38,20 @@
             <form method="post" action="" class="activation-form">
                 {% csrf_token %}
 
+                {% if error %}
+                <div class="error-message"
+                    style="background: rgba(255, 59, 48, 0.1); border: 1px solid rgba(255, 59, 48, 0.3); color: #ff3b30; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-weight: 500; text-align: center;">
+                    {{ error }}
+                </div>
+                {% endif %}
+
                 <div class="form-section">
                     <label>Restroom Name / Identifier</label>
                     <input type="text" name="restroom_name" placeholder="e.g., North Wing Gents" class="dark-input"
                         value="{{ restroom.name|default:'' }}" required>
                 </div>
 
+                {% if mode == 'create' %}
                 <div class="sensor-config-section">
                     <h4 class="section-title">((•)) SENSOR CONFIGURATION</h4>
                     <div class="sensor-grid">
@@ -62,8 +70,14 @@
                             <input type="text" name="sensor_footfall" placeholder="SN-PPL-0000"
                                 value="{{ footfall_sensor.sensor_id|default:'' }}" class="dark-input with-icon">
                         </div>
+                        <div class="sensor-input-group">
+                            <label>Moisture Level <span class="icon">�</span></label>
+                            <input type="text" name="sensor_moisture" placeholder="SN-MOS-0000"
+                                value="{{ moisture_sensor.sensor_id|default:'' }}" class="dark-input with-icon">
+                        </div>
                     </div>
                 </div>
+                {% endif %}
 
                 <div class="location-section">
                     <h4 class="section-title">📍 LOCATION</h4>
@@ -77,8 +91,7 @@
                                 <div>
                                     <label>Latitude</label>
                                     <input type="text" name="latitude" id="latitude" placeholder="35.6895"
-                                        value="{{ restroom.latitude|default:'' }}" class="dark-input" readonly
-                                        required>
+                                        value="{{ restroom.latitude|default:'' }}" class="dark-input" readonly required>
                                 </div>
                                 <div>
                                     <label>Longitude</label>
@@ -124,87 +137,87 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // 1. Setup Elements and Initial State
-        const latInput = document.getElementById('latitude');
-        const lngInput = document.getElementById('longitude');
-        const searchInput = document.getElementById('address-search');
-        let marker;
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 1. Setup Elements and Initial State
+            const latInput = document.getElementById('latitude');
+            const lngInput = document.getElementById('longitude');
+            const searchInput = document.getElementById('address-search');
+            let marker;
 
-        const existingLat = latInput.value;
-        const existingLng = lngInput.value;
+            const existingLat = latInput.value;
+            const existingLng = lngInput.value;
 
-        const startLat = existingLat ? parseFloat(existingLat) : 9.6841;
-        const startLng = existingLng ? parseFloat(existingLng) : 76.3312;
-        const startZoom = existingLat ? 16 : 13;
+            const startLat = existingLat ? parseFloat(existingLat) : 9.6841;
+            const startLng = existingLng ? parseFloat(existingLng) : 76.3312;
+            const startZoom = existingLat ? 16 : 13;
 
-        // 2. Initialize Map
-        const map = L.map('map').setView([startLat, startLng], startZoom);
+            // 2. Initialize Map
+            const map = L.map('map').setView([startLat, startLng], startZoom);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap &copy; CARTO'
-        }).addTo(map);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap &copy; CARTO'
+            }).addTo(map);
 
-        if (existingLat && existingLng) {
-            marker = L.marker([startLat, startLng]).addTo(map);
-        }
-
-        // 3. Helper Function to Update Marker & Form Fields
-        function updateLocation(lat, lng, moveMap = false) {
-            const formattedLat = parseFloat(lat).toFixed(6);
-            const formattedLng = parseFloat(lng).toFixed(6);
-
-            latInput.value = formattedLat;
-            lngInput.value = formattedLng;
-
-            if (marker) {
-                marker.setLatLng([lat, lng]);
-            } else {
-                marker = L.marker([lat, lng]).addTo(map);
+            if (existingLat && existingLng) {
+                marker = L.marker([startLat, startLng]).addTo(map);
             }
 
-            if (moveMap) {
-                map.setView([lat, lng], 15);
+            // 3. Helper Function to Update Marker & Form Fields
+            function updateLocation(lat, lng, moveMap = false) {
+                const formattedLat = parseFloat(lat).toFixed(6);
+                const formattedLng = parseFloat(lng).toFixed(6);
+
+                latInput.value = formattedLat;
+                lngInput.value = formattedLng;
+
+                if (marker) {
+                    marker.setLatLng([lat, lng]);
+                } else {
+                    marker = L.marker([lat, lng]).addTo(map);
+                }
+
+                if (moveMap) {
+                    map.setView([lat, lng], 15);
+                }
             }
-        }
 
-        // 4. Search Logic (The part you wanted to import)
-        function performSearch() {
-            const query = searchInput.value;
-            if (!query) return;
+            // 4. Search Logic (The part you wanted to import)
+            function performSearch() {
+                const query = searchInput.value;
+                if (!query) return;
 
-            // Use Nominatim Free API
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        const lat = data[0].lat;
-                        const lon = data[0].lon;
-                        updateLocation(lat, lon, true);
-                    } else {
-                        alert("Location not found. Please try a different search term or click on the map.");
-                    }
-                })
-                .catch(error => {
-                    console.error('Search Error:', error);
-                    alert("Unable to reach search service.");
-                });
-        }
+                // Use Nominatim Free API
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            const lat = data[0].lat;
+                            const lon = data[0].lon;
+                            updateLocation(lat, lon, true);
+                        } else {
+                            alert("Location not found. Please try a different search term or click on the map.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Search Error:', error);
+                        alert("Unable to reach search service.");
+                    });
+            }
 
-        // 5. Event Listeners
-        map.on('click', function (e) {
-            updateLocation(e.latlng.lat, e.latlng.lng);
+            // 5. Event Listeners
+            map.on('click', function (e) {
+                updateLocation(e.latlng.lat, e.latlng.lng);
+            });
+
+            searchInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Stop form from submitting
+                    performSearch();
+                }
+            });
         });
-
-        searchInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                e.preventDefault(); // Stop form from submitting
-                performSearch();
-            }
-        });
-    });
-</script>
+    </script>
 </body>
 
 </html>

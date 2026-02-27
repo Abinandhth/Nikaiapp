@@ -2,11 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from .models import Restroom, Sensor, Staff, CleaningActivity
 import uuid
 
 def index(request):
-   
+    if request.user.is_authenticated:
+        return redirect('dashboard')
     return render(request, 'landing/index.html')
 
 @login_required
@@ -17,6 +19,7 @@ def activation(request, restroom_id=None):
     ammonia_sensor = None
     smoke_sensor = None
     footfall_sensor = None
+    moisture_sensor = None
     
     if restroom_id:
         try:
@@ -26,6 +29,7 @@ def activation(request, restroom_id=None):
             ammonia_sensor = restroom.sensors.filter(sensor_type='Ammonia').first()
             smoke_sensor = restroom.sensors.filter(sensor_type='Smoke').first()
             footfall_sensor = restroom.sensors.filter(sensor_type='Footfall').first()
+            moisture_sensor = restroom.sensors.filter(sensor_type='Moisture').first()
         except Restroom.DoesNotExist:
              return redirect('restroom_list')
 
@@ -36,6 +40,16 @@ def activation(request, restroom_id=None):
             longitude = request.POST.get('longitude')
             capacity = request.POST.get('capacity')
             status = request.POST.get('status')
+            
+            # Check if sensor IDs already exist before saving
+            if mode == 'create':
+                sensor_fields = ['sensor_ammonia', 'sensor_smoke', 'sensor_footfall','sensor_moisture']
+                for field in sensor_fields:
+                    sid = request.POST.get(field)
+                    if sid:
+                        existing_sensor = Sensor.objects.filter(sensor_id=sid).first()
+                        if existing_sensor:
+                            raise ValueError(f"Sensor ID '{sid}' is already assigned to another facility.")
             
             if mode == 'create':
                  # Create Restroom
@@ -55,42 +69,71 @@ def activation(request, restroom_id=None):
                 restroom.longitude = float(longitude)
                 restroom.capacity = int(capacity)
                 restroom.status = status
+                restroom.admin = request.user
                 restroom.save()
 
             # Link/Update Sensors
-            sensor_map = {
-                'sensor_ammonia': 'Ammonia',
-                'sensor_smoke': 'Smoke',
-                'sensor_footfall': 'Footfall'
-            }
-            
-            for field, type_name in sensor_map.items():
-                sid = request.POST.get(field)
-                if sid:
-                    sensor, created = Sensor.objects.get_or_create(
-                        sensor_id=sid,
-                        defaults={
-                            'sensor_type': type_name, 
-                            'restroom': restroom
-                        }
-                    )
-                    if not created:
-                        sensor.restroom = restroom
-                        sensor.sensor_type = type_name 
-                        sensor.save()
+            if mode == 'create':
+                sensor_map = {
+                    'sensor_ammonia': 'Ammonia',
+                    'sensor_smoke': 'Smoke',
+                    'sensor_footfall': 'Footfall',
+                    'sensor_moisture': 'Moisture'
+                }
+                
+                for field, type_name in sensor_map.items():
+                    sid = request.POST.get(field)
+                    if sid:
+                        Sensor.objects.create(
+                            sensor_id=sid,
+                            sensor_type=type_name, 
+                            restroom=restroom
+                        )
             
             return redirect('restroom_list')
 
         except Exception as e:
              # helpful for debugging if something goes wrong
              print(f"Error in activation: {e}")
+             
+             # Retain form values on error
+             class DummySensor:
+                 def __init__(self, sensor_id):
+                     self.sensor_id = sensor_id
+                     
+             error_ammonia = DummySensor(request.POST.get('sensor_ammonia')) if request.POST.get('sensor_ammonia') else ammonia_sensor
+             error_smoke = DummySensor(request.POST.get('sensor_smoke')) if request.POST.get('sensor_smoke') else smoke_sensor
+             error_footfall = DummySensor(request.POST.get('sensor_footfall')) if request.POST.get('sensor_footfall') else footfall_sensor
+             error_moisture = DummySensor(request.POST.get('sensor_moisture')) if request.POST.get('sensor_moisture') else moisture_sensor
+             
+             class DummyRestroom:
+                 def __init__(self, name, lat, lng, cap, stat):
+                     self.name = name
+                     self.latitude = lat
+                     self.longitude = lng
+                     self.capacity = cap
+                     self.status = stat
+                     
+             error_restroom = DummyRestroom(
+                 request.POST.get('restroom_name'),
+                 request.POST.get('latitude'),
+                 request.POST.get('longitude'),
+                 request.POST.get('capacity'),
+                 request.POST.get('status')
+             ) if request.POST else restroom
+             
+             error_msg = str(e)
+             if "Error processing request:" in error_msg:
+                 error_msg = error_msg.replace("Error processing request: ", "")
+                 
              return render(request, 'landing/activation.html', {
-                 'error': f'Error processing request: {e}',
+                 'error': error_msg,
                  'mode': mode,
-                 'restroom': restroom,
-                 'ammonia_sensor': ammonia_sensor,
-                 'smoke_sensor': smoke_sensor,
-                 'footfall_sensor': footfall_sensor
+                 'restroom': error_restroom,
+                 'ammonia_sensor': error_ammonia,
+                 'smoke_sensor': error_smoke,
+                 'footfall_sensor': error_footfall,
+                 'moisture_sensor':error_moisture
              })
 
     return render(request, 'landing/activation.html', {
@@ -98,7 +141,8 @@ def activation(request, restroom_id=None):
         'restroom': restroom,
         'ammonia_sensor': ammonia_sensor,
         'smoke_sensor': smoke_sensor,
-        'footfall_sensor': footfall_sensor
+        'footfall_sensor': footfall_sensor,
+        'moisture_sensor':moisture_sensor
     })
 
 from datetime import datetime, timedelta
@@ -132,7 +176,35 @@ def dashboard(request, restroom_id=None):
     # Sensors
     ammonia_sensor = restroom.sensors.filter(sensor_type='Ammonia').first()
     footfall_sensor = restroom.sensors.filter(sensor_type='Footfall').first()
+    moisture_sensor = restroom.sensors.filter(sensor_type='Moisture').first()
+    smoke_sensor = restroom.sensors.filter(sensor_type='Smoke').first()
     
+    # Moisture Data
+    current_moisture = 0
+    floor_status = 'Unknown'
+
+    if moisture_sensor:
+        latest_reading = moisture_sensor.readings.filter(timestamp__date=selected_date).order_by('-timestamp').first()
+        if latest_reading:
+            current_moisture = latest_reading.value
+            if current_moisture < 10:
+                floor_status = 'Dry'
+            else:
+                floor_status = 'Wet'
+
+    # Smoke Data
+    current_smoke = 0
+    safety_status = 'Unknown'
+
+    if smoke_sensor:
+        latest_smoke = smoke_sensor.readings.filter(timestamp__date=selected_date).order_by('-timestamp').first()
+        if latest_smoke:
+            current_smoke = latest_smoke.value
+            if current_smoke > 50:
+                safety_status = 'Caution'
+            else:
+                safety_status = 'Safe / Clear'
+
     # 1. Ammonia Data (Today/Selected Date)
     ammonia_labels = []
     ammonia_data = []
@@ -200,7 +272,102 @@ def dashboard(request, restroom_id=None):
         'footfall_daily_data': footfall_daily_data,
         'footfall_monthly_labels': footfall_monthly_labels,
         'footfall_monthly_data': footfall_monthly_data,
+        'current_moisture': current_moisture,
+        'floor_status': floor_status,
+        'current_smoke': current_smoke,
+        'safety_status': safety_status,
         'page': 'overview',
+    })
+
+@login_required
+def dashboard_data(request, restroom_id=None):
+    try:
+        if restroom_id:
+            restroom = request.user.restrooms.get(restroom_id=restroom_id)
+        else:
+            restroom = request.user.restrooms.first()
+            
+        if not restroom:
+            return JsonResponse({'error': 'No restroom found'}, status=404)
+    except Restroom.DoesNotExist:
+         return JsonResponse({'error': 'Restroom not found'}, status=404)
+    except Exception:
+        return JsonResponse({'error': 'Error fetching restroom'}, status=404)
+
+    # Date Filter
+    date_str = request.GET.get('date')
+    if date_str:
+        selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    else:
+        selected_date = timezone.now().date()
+
+    # Sensors
+    ammonia_sensor = restroom.sensors.filter(sensor_type='Ammonia').first()
+    footfall_sensor = restroom.sensors.filter(sensor_type='Footfall').first()
+    moisture_sensor = restroom.sensors.filter(sensor_type='Moisture').first()
+    smoke_sensor = restroom.sensors.filter(sensor_type='Smoke').first()
+
+    # Moisture Data
+    current_moisture = 0
+    floor_status = 'Unknown'
+    if moisture_sensor:
+        latest_reading = moisture_sensor.readings.filter(timestamp__date=selected_date).order_by('-timestamp').first()
+        if latest_reading:
+            current_moisture = latest_reading.value
+            if current_moisture < 10:
+                floor_status = 'Dry'
+            else:
+                floor_status = 'Wet'
+
+    # Smoke Data
+    current_smoke = 0
+    safety_status = 'Unknown'
+    if smoke_sensor:
+        latest_smoke = smoke_sensor.readings.filter(timestamp__date=selected_date).order_by('-timestamp').first()
+        if latest_smoke:
+            current_smoke = latest_smoke.value
+            if current_smoke > 50:
+                safety_status = 'Caution'
+            else:
+                safety_status = 'Safe / Clear'
+
+    # Ammonia Data
+    ammonia_labels = []
+    ammonia_data = []
+    current_ammonia = 0
+    ammonia_status = 'Normal'
+    if ammonia_sensor:
+        readings = ammonia_sensor.readings.filter(timestamp__date=selected_date).order_by('timestamp')
+        ammonia_labels = [r.timestamp.strftime('%H:%M') for r in readings]
+        ammonia_data = [r.value for r in readings]
+        if readings.exists():
+            current_ammonia = round(sum(ammonia_data) / len(ammonia_data), 1)
+            if current_ammonia > 25:
+                ammonia_status = 'Critical'
+
+    # Footfall Data (Daily)
+    footfall_daily_labels = []
+    footfall_daily_data = []
+    total_footfall_today = 0
+    if footfall_sensor:
+        daily_readings = footfall_sensor.readings.filter(timestamp__date=selected_date).order_by('timestamp')
+        if daily_readings.exists():
+            total_footfall_today = int(sum([r.value for r in daily_readings]))
+            footfall_daily_labels = [r.timestamp.strftime('%H:%M') for r in daily_readings]
+            footfall_daily_data = [int(r.value) for r in daily_readings]
+
+    return JsonResponse({
+        'current_ammonia': current_ammonia,
+        'ammonia_status': ammonia_status,
+        'ammonia_labels': ammonia_labels,
+        'ammonia_data': ammonia_data,
+        'total_footfall_today': total_footfall_today,
+        'footfall_daily_labels': footfall_daily_labels,
+        'footfall_daily_data': footfall_daily_data,
+        'current_moisture': current_moisture,
+        'floor_status': floor_status,
+        'current_smoke': current_smoke,
+        'safety_status': safety_status,
     })
 
 @login_required
@@ -256,6 +423,7 @@ def staff_list(request, restroom_id=None):
             staff.department = 'General'
 
     return render(request, 'landing/staff_list.html', {
+        'restrooms': request.user.restrooms.all(),
         'restroom': restroom,
         'staff_members': staff_members,
         'page': 'staff'
@@ -403,7 +571,7 @@ def admin_register(request):
 
     return render(request, 'landing/admin_register.html')
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 
 def login_view(request):
@@ -417,6 +585,10 @@ def login_view(request):
         form = AuthenticationForm()
     
     return render(request, 'landing/login.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('index')
 
 @login_required
 def staff_logs(request, staff_id):

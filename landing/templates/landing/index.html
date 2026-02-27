@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NIKAI - Breathing Cleaner, Living Safer</title>
+    <title>NIKAI</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'landing/style.css' %}">
+    <link rel="stylesheet" href="{% static 'landing/style.css' %}?v=1.01">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,12 +15,12 @@
 <body>
     <header class="navbar">
         <div class="logo">
-            <span class="logo-icon">✶</span> NIKAI
+            <span class="logo-icon"><img src="{% static 'landing/logo.png' %}" alt="Logo"></span> NIKAI
         </div>
         <nav>
-            <a href="#about">About</a>
+            <a href="#hero">Intro</a>
             <a href="#features">Features</a>
-            <a href="#contact">Contact</a>
+            <!-- <a href="#contact">Contact</a> -->
         </nav>
         <div class="auth-buttons">
             <a href="{% url 'login' %}" class="login-btn">Login</a>
@@ -29,7 +29,7 @@
     </header>
 
     <main>
-        <section class="hero">
+        <section id="hero" class="hero">
             <div class="hero-content">
                 <div class="badge">● SYSTEM ONLINE</div>
                 <h1>Breathing Cleaner,<br>Living <span class="text-muted">Safer.</span></h1>
@@ -40,7 +40,8 @@
             <div class="hero-image">
                 <div class="dashboard-preview">
                     <!-- Placeholder for dashboard preview -->
-                    <div class="chart-placeholder">📊</div>
+                    <div class="chart-placeholder"><img src="{% static 'landing/dashboard.png' %}"
+                            alt="Dashboard Preview"></div>
                 </div>
             </div>
         </section>
@@ -74,7 +75,7 @@
 
 
 
-        <section id="contact" class="contact">
+        <!-- <section id="contact" class="contact">
             <h2>Get in Touch</h2>
             <p class="section-subtitle">Have questions about NIKAI? We're here to help.</p>
 
@@ -95,7 +96,7 @@
                 </div>
                 <button type="submit" class="submit-btn">Send Message ➤</button>
             </form>
-        </section>
+        </section> -->
     </main>
 
     <footer>

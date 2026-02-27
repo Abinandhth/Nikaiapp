@@ -16,14 +16,10 @@
     <!-- Sidebar -->
     <aside class="sidebar-v2">
         <div class="logo-v2">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00ecff" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path d="M2 17L12 22L22 17" stroke="#00ecff" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path d="M2 12L12 17L22 12" stroke="#00ecff" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-            </svg>
+            <span class="logo-icon"><a href="{% url 'dashboard' %}"
+                    style="text-decoration: none !important; border: none; outline: none;"><img
+                        src="{% static 'landing/logo.png' %}" alt="Logo"
+                        style="height: 32px; border: none; outline: none;"></a></span>
         </div>
         <nav class="nav-v2">
             <a href="{% url 'dashboard' %}" class="nav-item active">
@@ -62,13 +58,16 @@
             </a>
         </nav>
         <div class="user-v2">
-            <div class="user-avatar">
+            <div class="user-avatar" title="{{ request.user.username }}">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
             </div>
+            <div
+                style="font-size: 0.65rem; color: var(--text-second); text-align: center; margin-top: 0.5rem; word-break: break-all; padding: 0 4px;">
+                {{ request.user.username }}</div>
         </div>
     </aside>
 
@@ -88,9 +87,22 @@
                     Facility: {{ restroom.name }}
                 </div>
             </div>
-            <div class="system-status">
-                <div class="status-dot-pulse"></div>
-                SYSTEM ONLINE
+            <div class="system-status" style="display: flex; gap: 1rem;">
+                <div
+                    style="display: flex; align-items: center; gap: 0.5rem; background: rgba(16, 185, 129, 0.1); padding: 0.5rem 1rem; border-radius: 20px;">
+                    <div class="status-dot-pulse"></div>
+                    SYSTEM ONLINE
+                </div>
+                <a href="{% url 'logout' %}"
+                    style="display: flex; align-items: center; gap: 0.5rem; background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-decoration: none;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    LOGOUT
+                </a>
             </div>
         </header>
 
@@ -102,7 +114,7 @@
                 <div class="card-header">
                     <div>
                         <div class="card-label">Air Quality</div>
-                        <span class="sub-label">Ammonia (NH3)</span>
+                        <!-- <span class="sub-label">Ammonia (NH3)</span> -->
                     </div>
                     <div class="live-badge">
                         <span class="live-dot"></span> Live
@@ -115,13 +127,13 @@
                             <circle class="radial-value" id="ammoniaGauge" cx="50" cy="50" r="40"></circle>
                         </svg>
                         <div class="gauge-text">
-                            <div class="gauge-val">{{ current_ammonia }}</div>
+                            <div class="gauge-val" id="ammonia-val-text">{{ current_ammonia }}</div>
                             <div class="gauge-unit">PPM</div>
                         </div>
                     </div>
                     <div class="aq-status">
                         <div class="card-label">Status</div>
-                        <h4>{{ ammonia_status }}</h4>
+                        <h4 id="ammonia-status-text">{{ ammonia_status }}</h4>
                         <p>Threshold: &lt; 25 PPM</p>
                     </div>
                 </div>
@@ -129,24 +141,27 @@
 
             <!-- Safety Status Card -->
             <div class="d-card">
+                <div class="card-label">Smoke Detector</div>
                 <div class="safety-content">
-                    <div class="shield-icon">
+                    <div class="shield-icon" id="smoke-shield-icon"
+                        style="color: {% if safety_status == 'Safe / Clear' %}#10b981{% elif safety_status == 'Caution' %}#ef4444{% else %}#9ca3af{% endif %};">
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                         </svg>
                     </div>
-                    <div class="safety-status-text">Safe / Clear</div>
-                    <div class="safety-sub">Smoke Detector Status</div>
+                    <div class="safety-status-text" id="smoke-status-text">{{ safety_status }}</div>
+                    <!-- <div class="safety-sub">Smoke Detector Status (Value: {{ current_smoke }})</div> -->
                 </div>
                 <div class="last-check">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                     </svg>
-                    Last check: Just now
+                    <!-- Last check: Just now -->
                 </div>
             </div>
+
 
             <!-- Footfall Card -->
             <div class="d-card">
@@ -161,13 +176,30 @@
                     </svg>
                 </div>
                 <div class="footfall-stat">
-                    <span class="big-number">{{ total_footfall_today }}</span>
-                    <span class="trend-badge trend-up">↗ +12%</span>
+                    <span class="big-number" id="footfall-val-text">{{ total_footfall_today }}</span>
+                    <span class="trend-badge trend-up"></span>
                 </div>
                 <div class="sub-label" style="text-transform: none; color: var(--text-second); margin-top:0.5rem">Total
                     Visits Today</div>
                 <div class="footfall-chart-mini">
                     <canvas id="miniSparkline"></canvas>
+                </div>
+            </div>
+            <!-- Floor Status Card -->
+            <div class="d-card">
+                <div class="card-label">Floor Status</div>
+                <div class="safety-content">
+                    <div class="shield-icon" id="floor-shield-icon"
+                        style="color: {% if floor_status == 'Dry' %}#10b981{% elif floor_status == 'Wet' %}#3b82f6{% else %}#9ca3af{% endif %};">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="safety-status-text" id="floor-status-text"
+                        style="font-size: 1.5rem; font-weight: bold;">{{ floor_status }}
+                    </div>
+                    <!-- <div class="safety-sub">Floor Status (Moisture: {{ current_moisture }})</div> -->
                 </div>
             </div>
 
@@ -179,7 +211,7 @@
                 <div>
                     <div class="card-label" style="font-size: 1rem; color: white;">Facility Trends</div>
                     <div class="legend">
-                        <div class="legend-item"><span class="dot-ammonia"></span> Ammonia Levels</div>
+                        <div class="legend-item"><span class="dot-ammonia"></span> Air Quality levels</div>
                         <div class="legend-item"><span class="dot-footfall"></span> Footfall</div>
                     </div>
                 </div>
@@ -233,12 +265,12 @@
         Chart.defaults.font.family = "'Inter', sans-serif";
 
         // 2. Mini Sparkline for Footfall
-        new Chart(document.getElementById('miniSparkline'), {
+        const miniSparklineChart = new Chart(document.getElementById('miniSparkline'), {
             type: 'line',
             data: {
                 labels: {{ footfall_daily_labels| safe }}, // Reuse daily labels
-            datasets: [{
-                data: {{ footfall_daily_data| safe }},
+        datasets: [{
+            data: {{ footfall_daily_data| safe }},
             borderColor: '#00ecff',
             borderWidth: 2,
             tension: 0.4,
@@ -246,10 +278,10 @@
             fill: false
                 }]
             },
-            options: {
+        options: {
             responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
             scales: { x: { display: false }, y: { display: false } }
         }
         });
@@ -260,11 +292,11 @@
         gradientAmmonia.addColorStop(0, 'rgba(0, 236, 255, 0.2)');
         gradientAmmonia.addColorStop(1, 'rgba(0, 236, 255, 0)');
 
-        new Chart(ctx, {
+        const mainChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: {{ ammonia_labels| safe }}, // Assuming these align roughly or using one time axis
-            datasets: [
+        datasets: [
             {
                 label: 'Ammonia Levels',
                 data: {{ ammonia_data| safe }},
@@ -291,23 +323,23 @@
                     }
         ]
             },
-            options: {
+        options: {
             responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
+                maintainAspectRatio: false,
+                    interaction: {
                 mode: 'index',
-                intersect: false,
+                    intersect: false,
             },
             plugins: {
                 legend: { display: false }, // Custom legend used
                 tooltip: {
                     backgroundColor: '#1f2937',
-                    titleColor: '#fff',
-                    bodyColor: '#9ca3af',
-                    borderColor: '#374151',
-                    borderWidth: 1,
-                    padding: 10,
-                    displayColors: true
+                        titleColor: '#fff',
+                            bodyColor: '#9ca3af',
+                                borderColor: '#374151',
+                                    borderWidth: 1,
+                                        padding: 10,
+                                            displayColors: true
                 }
             },
             scales: {
@@ -317,19 +349,66 @@
                 },
                 y: {
                     position: 'left',
-                    grid: { color: 'rgba(31, 41, 55, 0.5)' },
+                        grid: { color: 'rgba(31, 41, 55, 0.5)' },
                     ticks: { color: '#6b7280' },
                     beginAtZero: true
                 },
                 y1: {
                     position: 'right',
-                    grid: { display: false },
+                        grid: { display: false },
                     ticks: { color: '#6b7280' },
                     beginAtZero: true
                 }
             }
         }
         });
+
+        // Polling function for real-time updates
+        function fetchDashboardData() {
+            let baseUrl = window.location.pathname;
+            if (!baseUrl.endsWith('/')) baseUrl += '/';
+            let fetchUrl = baseUrl + 'data/?date={{ selected_date }}';
+
+            fetch(fetchUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // Update Charts
+                    miniSparklineChart.data.labels = data.footfall_daily_labels;
+                    miniSparklineChart.data.datasets[0].data = data.footfall_daily_data;
+                    miniSparklineChart.update();
+
+                    mainChart.data.labels = data.ammonia_labels;
+                    mainChart.data.datasets[0].data = data.ammonia_data;
+                    mainChart.data.datasets[1].data = data.footfall_daily_data;
+                    mainChart.update();
+
+                    // Update Ammonia Gauge
+                    const gaugeCircle = document.getElementById('ammoniaGauge');
+                    const maxGaugeVal = 50;
+                    const r = gaugeCircle.r.baseVal.value;
+                    const circ = 2 * Math.PI * r;
+                    const off = circ - (Math.min(data.current_ammonia, maxGaugeVal) / maxGaugeVal) * circ;
+                    gaugeCircle.style.strokeDashoffset = off;
+
+                    // Update values in UI
+                    document.getElementById('ammonia-val-text').innerText = data.current_ammonia;
+                    document.getElementById('ammonia-status-text').innerText = data.ammonia_status;
+                    document.getElementById('footfall-val-text').innerText = data.total_footfall_today;
+
+                    const smokeEl = document.getElementById('smoke-status-text');
+                    smokeEl.innerText = data.safety_status;
+                    document.getElementById('smoke-shield-icon').style.color = (data.safety_status === 'Safe / Clear') ? '#10b981' : (data.safety_status === 'Caution' ? '#ef4444' : '#9ca3af');
+
+                    const floorEl = document.getElementById('floor-status-text');
+                    if (floorEl) {
+                        floorEl.innerText = data.floor_status;
+                        document.getElementById('floor-shield-icon').style.color = (data.floor_status === 'Dry') ? '#10b981' : (data.floor_status === 'Wet' ? '#3b82f6' : '#9ca3af');
+                    }
+                })
+                .catch(err => console.error('Error fetching real-time dashboard data:', err));
+        }
+
+        setInterval(fetchDashboardData, 5000); // Poll every 5 seconds
     </script>
 </body>
 

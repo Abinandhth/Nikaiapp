@@ -16,7 +16,7 @@
     <div class="split-screen">
         <div class="left-panel">
             <div class="logo">
-                <span class="logo-icon">✶</span> NIKAI
+                <span class="logo-icon"><img src="{% static 'landing/logo.png' %}" alt="Logo"></span> NIKAI
             </div>
 
             <div class="content-wrapper">
@@ -28,9 +28,7 @@
                     <span class="status-dot"></span> STATUS: WAITING FOR ACTIVATION
                 </div>
 
-                <div class="footer-info">
-                    <p>V.4.0.2 // SECURE_CONNECTION</p>
-                </div>
+
             </div>
         </div>
 
@@ -50,7 +48,7 @@
 
                     <div class="form-group">
                         <label for="username">FULL NAME / USERNAME</label>
-                        <input type="text" id="username" name="username" placeholder="ex. Alex Chen" required>
+                        <input type="text" id="username" name="username" placeholder="name" required>
                     </div>
 
                     <div class="form-group">
@@ -61,12 +59,20 @@
                     <div class="form-group-row">
                         <div class="form-group">
                             <label for="password">PASSWORD</label>
-                            <input type="password" id="password" name="password" placeholder="........" required>
+                            <div class="input-with-icon">
+                                <input type="password" id="password" name="password" placeholder="........" required>
+                                <span class="icon-right" id="togglePassword" style="cursor: pointer;"
+                                    title="Toggle Password Visibility">👁️</span>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="confirm_password">CONFIRM PASSWORD</label>
-                            <input type="password" id="confirm_password" name="confirm_password" placeholder="........"
-                                required>
+                            <div class="input-with-icon">
+                                <input type="password" id="confirm_password" name="confirm_password"
+                                    placeholder="........" required>
+                                <span class="icon-right" id="toggleConfirmPassword" style="cursor: pointer;"
+                                    title="Toggle Password Visibility">👁️</span>
+                            </div>
                         </div>
                     </div>
 
@@ -77,6 +83,31 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const togglePassword = document.getElementById('togglePassword');
+            const password = document.getElementById('password');
+            const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+            const confirmPassword = document.getElementById('confirm_password');
+
+            if (togglePassword && password) {
+                togglePassword.addEventListener('click', function () {
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    this.style.opacity = type === 'password' ? '1' : '0.5';
+                });
+            }
+
+            if (toggleConfirmPassword && confirmPassword) {
+                toggleConfirmPassword.addEventListener('click', function () {
+                    const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                    confirmPassword.setAttribute('type', type);
+                    this.style.opacity = type === 'password' ? '1' : '0.5';
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

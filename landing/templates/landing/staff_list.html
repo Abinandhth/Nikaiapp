@@ -15,14 +15,10 @@
     <!-- Sidebar -->
     <aside class="sidebar-v2">
         <div class="logo-v2">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00ecff" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path d="M2 17L12 22L22 17" stroke="#00ecff" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path d="M2 12L12 17L22 12" stroke="#00ecff" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-            </svg>
+            <span class="logo-icon"><a href="{% url 'dashboard' %}"
+                    style="text-decoration: none !important; border: none; outline: none;"><img
+                        src="{% static 'landing/logo.png' %}" alt="Logo"
+                        style="height: 32px; border: none; outline: none;"></a></span>
         </div>
         <nav class="nav-v2">
             <a href="{% url 'dashboard' %}" class="nav-item">
@@ -68,6 +64,9 @@
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
             </div>
+            <div
+                style="font-size: 0.65rem; color: var(--text-second); text-align: center; margin-top: 0.5rem; word-break: break-all; padding: 0 4px;">
+                {{ request.user.username }}</div>
         </div>
     </aside>
 
@@ -100,19 +99,24 @@
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
-                    <input type="text" placeholder="Search by name, ID, or email..." class="dark-input"
+                    <input type="text" id="searchInput" onkeyup="filterStaff()"
+                        placeholder="Search by name, ID, or email..." class="dark-input"
                         style="width: 100%; padding-left: 3rem; background: rgba(31, 41, 55, 0.5); border-color: rgba(75, 85, 99, 0.4);">
                 </div>
                 <div style="display: flex; gap: 1rem;">
-                    <select class="dark-input" style="width: auto;">
-                        <option>Role: All</option>
+                    <select id="roleFilter" onchange="filterStaff()" class="dark-input" style="width: auto;">
+                        <option value="All">Role: All</option>
+                        <option value="Janitor">Role: Janitor</option>
+                        <option value="Supervisor">Role: Supervisor</option>
+                        <option value="Technician">Role: Technician</option>
                     </select>
-                    <select class="dark-input" style="width: auto;">
-                        <option>Department: Any</option>
+                    <select id="deptFilter" onchange="filterStaff()" class="dark-input" style="width: auto;">
+                        <option value="Any">Department: Any</option>
+                        {% for r in restrooms %}
+                        <option value="{{ r.name }}">Department: {{ r.name }}</option>
+                        {% endfor %}
                     </select>
-                    <select class="dark-input" style="width: auto;">
-                        <option>Status: All</option>
-                    </select>
+
                 </div>
             </div>
         </section>
@@ -140,9 +144,10 @@
                                 Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="staffTableBody">
                         {% for staff in staff_members %}
-                        <tr style="border-bottom: 1px solid var(--card-border);">
+                        <tr class="staff-row" data-role="{{ staff.role }}" data-dept="{{ staff.restroom.name }}"
+                            style="border-bottom: 1px solid var(--card-border);">
                             <td style="padding: 1rem 1.5rem;">
                                 <div style="display: flex; align-items: center; gap: 1rem;">
                                     <div
@@ -253,6 +258,39 @@
                 });
             }
         });
+
+        // Filter Staff List
+        function filterStaff() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const roleFilter = document.getElementById('roleFilter').value;
+            const deptFilter = document.getElementById('deptFilter').value;
+            const rows = document.querySelectorAll('.staff-row');
+
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const nameEmailCell = row.cells[0].textContent.toLowerCase();
+                const rowRole = row.getAttribute('data-role');
+                const rowDept = row.getAttribute('data-dept');
+
+                const matchesSearch = nameEmailCell.includes(searchInput);
+                const matchesRole = (roleFilter === 'All') || (rowRole === roleFilter);
+                const matchesDept = (deptFilter === 'Any') || (rowDept === deptFilter);
+
+                if (matchesSearch && matchesRole && matchesDept) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Update the showing count
+            const countDisplay = document.querySelector('section > div[style*="font-size: 0.875rem; margin-top: 1rem;"]');
+            if (countDisplay) {
+                countDisplay.textContent = `Showing ${visibleCount} staff members`;
+            }
+        }
     </script>
 </body>
 

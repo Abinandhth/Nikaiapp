@@ -46,15 +46,25 @@ ul {
 }
 
 .logo {
-    font-weight: 700;
-    font-size: 1.5rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-decoration: none !important;
 }
 
 .logo-icon {
-    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    text-decoration: none !important;
+}
+
+.logo-icon img {
+    height: 20px;
+    width: auto;
+    object-fit: contain;
 }
 
 .navbar nav {
@@ -152,11 +162,21 @@ ul {
     align-items: center;
     justify-content: center;
     box-shadow: 0 0 50px rgba(0, 229, 255, 0.1);
+    overflow: hidden;
 }
 
 .chart-placeholder {
-    font-size: 3rem;
-    opacity: 0.2;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 /* Features */
@@ -432,6 +452,15 @@ body.dashboard-body {
     font-size: 1.5rem;
     color: var(--primary);
     margin-bottom: 3rem;
+}
+
+.logo-v2 a {
+    text-decoration: none !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    display: inline-block;
 }
 
 .nav-v2 {
@@ -1102,6 +1131,12 @@ footer {
     color: var(--primary-color);
     margin-bottom: 0.5rem;
     text-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+    display: flex;
+    justify-content: center;
+}
+
+.logo-icon-large .logo-icon img {
+    height: 48px;
 }
 
 .login-header h1 {

@@ -16,7 +16,8 @@
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <div class="logo-icon-large">✶</div>
+                <div class="logo-icon-large"><span class="logo-icon"><img src="{% static 'landing/logo.png' %}"
+                            alt="Logo"></span></div>
                 <h1>NIKAI</h1>
                 <p>FACILITY ADMIN PORTAL</p>
             </div>
@@ -43,31 +44,45 @@
                     <div class="input-with-icon">
                         <span class="icon">🔒</span>
                         <input type="password" id="password" name="password" placeholder="............" required>
-                        <span class="icon-right">👁️</span>
+                        <span class="icon-right" id="togglePassword" style="cursor: pointer;"
+                            title="Toggle Password Visibility">👁️</span>
                     </div>
                 </div>
 
                 <div class="form-options">
-                    <label class="checkbox-container">
+                    <!-- <label class="checkbox-container">
                         <input type="checkbox" name="remember">
                         <span class="checkmark"></span>
                         Remember me
                     </label>
-                    <a href="#" class="forgot-password">Forgot Password?</a>
+                    <a href="#" class="forgot-password">Forgot Password?</a> -->
                 </div>
 
                 <button type="submit" class="btn-primary full-width">Access Dashboard →</button>
             </form>
 
             <div class="login-footer">
-                <span class="status-dot"></span> SYSTEM OPERATIONAL • SECURE CONNECTION
+                <!-- <span class="status-dot"></span> SYSTEM OPERATIONAL • SECURE CONNECTION -->
+                
             </div>
-        </div>
 
-        <div class="copyright">
-            &copy; 2024 NIKAI Systems Inc. v2.4.0-rc
-        </div>
-    </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const togglePassword = document.getElementById('togglePassword');
+                    const password = document.getElementById('password');
+
+                    if (togglePassword && password) {
+                        togglePassword.addEventListener('click', function () {
+                            // Toggle the type attribute
+                            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                            password.setAttribute('type', type);
+
+                            // Toggle opacity to give a visual cue
+                            this.style.opacity = type === 'password' ? '1' : '0.5';
+                        });
+                    }
+                });
+            </script>
 </body>
 
 </html>
